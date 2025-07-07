@@ -40,6 +40,8 @@ async def on_voice_state_update(member, before, after):
     if now - last_notification_time[voice_channel_id] <= COOLDOWN_TIME:
         return
 
+    print(f'{member.display_name} joined voice channel {after.channel.id}')
+
     last_notification_time[voice_channel_id] = now
 
     for notification_channel_id in CHANNEL_MAPPING[voice_channel_id]:
@@ -49,7 +51,6 @@ async def on_voice_state_update(member, before, after):
         if notification_channel:
             await notification_channel.send(f'@everyone {member.mention} has joined the {after.channel.name} voice '
                                             f'channel.')
-            print(f'{member.display_name} joined voice channel {after.channel.id}')
         else:
             print(f'Notification channel {notification_channel_id} not found')
 
