@@ -1,19 +1,22 @@
-from discord import Intents, Client
-from dotenv import load_dotenv
-from os import getenv
 import time
+from discord import Client, Intents
+import yaml
 
-load_dotenv()
-VOICE_CHANNEL_ID = int(getenv('VOICE_CHANNEL_ID'))
-NOTIFICATION_CHANNEL_ID = int(getenv('NOTIFICATION_CHANNEL_ID'))
-COOLDOWN_TIME = int(getenv('COOLDOWN_TIME'))
+with open('config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
 
-last_notification_time = 0
+BOT_TOKEN = config['bot']['token']
+COOLDOWN_TIME = int(config['bot']['cooldown'])
+CHANNEL_MAPPING = {
+    int(voice_channel): [int(text_channel) for text_channel in targets]
+    for voice_channel, targets in config['channel_mapping'].items()
+}
+
+last_notification_time = {voice_channel: 0 for voice_channel in CHANNEL_MAPPING}
 
 intents = Intents.default()
 intents.members = True
 intents.voice_states = True
-
 client = Client(intents=intents)
 
 
@@ -24,15 +27,30 @@ async def on_ready():
 
 @client.event
 async def on_voice_state_update(member, before, after):
-    global last_notification_time
-    current_time = time.time()
-    if after.channel is not None and after.channel.id == VOICE_CHANNEL_ID and len(after.channel.members) == 1 and (current_time - last_notification_time) > COOLDOWN_TIME:
-        last_notification_time = current_time
-        notification_channel = client.get_channel(NOTIFICATION_CHANNEL_ID)
-        if notification_channel is not None:
-            await notification_channel.send(f'@everyone {member.mention} has joined the {after.channel.name} voice channel.')
+
+    if not after.channel or after.channel.id not in CHANNEL_MAPPING:
+        return
+
+    if len(after.channel.members) != 1:
+        return
+
+    now = time.time()
+    voice_channel_id = after.channel.id
+
+    if now - last_notification_time[voice_channel_id] <= COOLDOWN_TIME:
+        return
+
+    last_notification_time[voice_channel_id] = now
+
+    for notification_channel_id in CHANNEL_MAPPING[voice_channel_id]:
+
+        notification_channel = client.get_channel(notification_channel_id)
+
+        if notification_channel:
+            await notification_channel.send(f'@everyone {member.mention} has joined the {after.channel.name} voice '
+                                            f'channel.')
             print(f'{member.display_name} joined voice channel {after.channel.id}')
         else:
-            print(f'Notification channel {NOTIFICATION_CHANNEL_ID} not found')
+            print(f'Notification channel {notification_channel_id} not found')
 
-client.run(token=getenv('BOT_TOKEN'), reconnect=True)
+client.run(token=BOT_TOKEN, reconnect=True)
