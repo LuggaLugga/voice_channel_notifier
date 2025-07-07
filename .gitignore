@@ -1,0 +1,8 @@
+# JetBrains
+.idea
+
+# Python
+.venv
+
+# Environment
+.env
