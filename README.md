@@ -13,7 +13,7 @@ an empty voice channel, eagerly waiting for you to keep them company.
 
 ## Required Software
 
-- Python 3.12 or major
+- Python 3.13 or major
 
 ## Setup and Launch
 
@@ -21,11 +21,18 @@ an empty voice channel, eagerly waiting for you to keep them company.
 2. Create a virtual environment `python -m venv .venv`
 3. Activate the virtual environment `source .venv/bin/activate`
 4. Install necessary packages `pip install -r requirements.txt`
-5. Create an `.env` file in the root directory according to the following pattern and define the values
-    ```dotenv
-    BOT_TOKEN=
-    VOICE_CHANNEL_ID=
-    NOTIFICATION_CHANNEL_ID=
-    COOLDOWN_TIME=
+5. Create an `config.yaml` file in the root directory according to the following pattern and define the values
+    ```yaml
+    bot:
+      token: "<Your bot token>"
+      cooldown: <Cooldown in seconds>
+    channel_mapping:
+      "<Voice Channel ID>":
+        - "<Text Channel ID>"
+        - "<Text Channel ID>"
+        - "<Text Channel ID>"
+      "<Voice Channel ID>":
+        - "<Text Channel ID>"
+        - "<Text Channel ID>"
     ```
 6. Launch the bot `python bot.py`
