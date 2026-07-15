@@ -35,4 +35,4 @@ an empty voice channel, eagerly waiting for you to keep them company.
         - "<Text Channel ID>"
         - "<Text Channel ID>"
     ```
-6. Launch the bot `python bot.py`
+6. Launch the bot `python3 bot.py`
