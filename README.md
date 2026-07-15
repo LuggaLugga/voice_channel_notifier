@@ -18,7 +18,7 @@ an empty voice channel, eagerly waiting for you to keep them company.
 ## Setup and Launch
 
 1. Navigate into the root directory of this project
-2. Create a virtual environment `python -m venv .venv`
+2. Create a virtual environment `python3 -m venv .venv`
 3. Activate the virtual environment `source .venv/bin/activate`
 4. Install necessary packages `pip install -r requirements.txt`
 5. Create an `config.yaml` file in the root directory according to the following pattern and define the values
