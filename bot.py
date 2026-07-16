@@ -31,6 +31,9 @@ async def on_voice_state_update(member, before, after):
     if not after.channel or after.channel.id not in CHANNEL_MAPPING:
         return
 
+    if before.channel and before.channel.id == after.channel.id:
+        return
+
     if len(after.channel.members) != 1:
         return
 
